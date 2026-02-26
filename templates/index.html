@@ -1,63 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <title>SoilSense Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>VasuDa</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
 <header class="topbar">
-    <h2>🌱 SoilSense</h2>
-    <button id="startBtn" class="primary-btn">Start Test</button>
+  <h2> VasuDa</h2>
 </header>
 
 <main class="dashboard">
 
-    <!-- Graph Card -->
-    <div class="card chart-card">
-        <h4>Live Soil Moisture Trend</h4>
-        <canvas id="soilChart"></canvas>
+  <div class="bento large">
+    <h4>Soil Health Risk</h4>
+    <span id="riskScore">--</span>
+  </div>
+
+  <div class="bento"><h4>Avg Soil pH</h4><span id="ph">--</span></div>
+  <div class="bento"><h4>Soil Temp (°C)</h4><span id="temp">--</span></div>
+  <div class="bento"><h4>Soil Moisture (%)</h4><span id="moisture">--</span></div>
+  <div class="bento"><h4>Env Humidity (%)</h4><span id="humidity">--</span></div>
+  <!-- Farmer Context Cards -->
+    <div class="bento">
+    <h4>Crop Type</h4>
+    <span id="cropDisplay">--</span>
     </div>
 
-    <div class="card risk">
-        <h4>Soil Health Risk</h4>
-        <span id="riskScore">--</span>
+    <div class="bento">
+    <h4>Irrigation Frequency</h4>
+    <span id="irrigationDisplay">--</span>
     </div>
 
-    <div class="card">
-        <h4>Avg Soil pH</h4>
-        <span id="ph">--</span>
+    <div class="bento">
+    <h4>Fertilizer Frequency</h4>
+    <span id="fertilizerDisplay">--</span>
     </div>
-
-    <div class="card">
-        <h4>Avg Soil Temp (°C)</h4>
-        <span id="temp">--</span>
-    </div>
-
-    <div class="card">
-        <h4>Avg Soil Moisture (%)</h4>
-        <span id="moisture">--</span>
-    </div>
-
-    <div class="card">
-        <h4>Avg Env Humidity (%)</h4>
-        <span id="humidity">--</span>
-    </div>
+  
+  <div class="bento center">
+    <button id="startBtn">Start New Test</button>
+  </div>
 
 </main>
 
-<!-- Modal -->
-<div id="modal" class="modal hidden">
-    <div class="modal-box">
-        <h3>Running Soil Test</h3>
-        <p id="modalText">Recording 0 / 10</p>
-        <div class="progress">
-            <div id="progressBar"></div>
-        </div>
-    </div>
+<!-- SENSOR MODAL -->
+<div id="sensorModal" class="modal hidden">
+  <div class="modal-box">
+    <h3>Recording Soil Data</h3>
+    <p id="sensorText">0 / 10</p>
+    <div class="progress"><div id="progressBar"></div></div>
+  </div>
 </div>
 
+<!-- FARMER MODAL -->
+<!-- FARMER INPUT MODAL -->
+<div id="farmerModal" class="modal hidden">
+  <div class="modal-box farmer-box">
+
+    <h3 class="modal-title">Farmer Inputs</h3>
+    <p class="modal-subtitle">
+      Help us understand your farming practices
+    </p>
+
+    <div class="form-group">
+      <label>Crop Type</label>
+      <select id="crop" class="modern-select">
+        <option>Rice</option>
+        <option>Wheat</option>
+        <option>Maize</option>
+        <option>Cotton</option>
+        <option>Vegetables</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Irrigation Frequency</label>
+      <select id="irrigation" class="modern-select">
+        <option>Daily</option>
+        <option>Alternate Days</option>
+        <option>Weekly</option>
+        <option>Irregular</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Fertilizer Frequency</label>
+      <select id="fertilizer" class="modern-select">
+        <option>Weekly</option>
+        <option>Monthly</option>
+        <option>Rare</option>
+        <option>None</option>
+      </select>
+    </div>
+
+    <button id="computeRisk" class="primary-cta">
+      Compute Soil Risk
+    </button>
+
+  </div>
+</div>
 <script src="/static/script.js"></script>
 </body>
 </html>

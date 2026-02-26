@@ -1,104 +1,86 @@
 let intervalId = null;
-let isRecording = false;
 
-// UI elements
 const startBtn = document.getElementById("startBtn");
-const modal = document.getElementById("modal");
-const modalText = document.getElementById("modalText");
+const sensorModal = document.getElementById("sensorModal");
+const farmerModal = document.getElementById("farmerModal");
 const progressBar = document.getElementById("progressBar");
+const sensorText = document.getElementById("sensorText");
 
-// Metric elements
+const cropDisplay = document.getElementById("cropDisplay");
+const irrigationDisplay = document.getElementById("irrigationDisplay");
+const fertilizerDisplay = document.getElementById("fertilizerDisplay");
+
 const phEl = document.getElementById("ph");
 const tempEl = document.getElementById("temp");
 const moistureEl = document.getElementById("moisture");
 const humidityEl = document.getElementById("humidity");
 const riskEl = document.getElementById("riskScore");
 
-// ----------------- CHART SETUP -----------------
-const ctx = document.getElementById("soilChart").getContext("2d");
+startBtn.onclick = async () => {
+  sensorModal.classList.remove("hidden");
+  progressBar.style.width = "0%";
+  sensorText.innerText = "0 / 10";
 
-let labels = [];
-let moistureData = [];
+  await fetch("/start-test", { method: "POST" });
 
-const soilChart = new Chart(ctx, {
-    type: "line",
-    data: {
-        labels: labels,
-        datasets: [{
-            label: "Soil Moisture (%)",
-            data: moistureData,
-            tension: 0.4,
-            borderWidth: 2
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true,
-                max: 100
-            }
-        }
+  intervalId = setInterval(async () => {
+    const summary = await fetch("/summary").then(r => r.json());
+    const count = summary.count || 0;
+
+    progressBar.style.width = (count * 10) + "%";
+    sensorText.innerText = `${count} / 10`;
+
+    if (count === 10) {
+      clearInterval(intervalId);
+      sensorModal.classList.add("hidden");
+      farmerModal.classList.remove("hidden");
+
+      window.soilConditionRisk = summary.soil_condition_risk;
+
+      phEl.innerText = summary.avg_ph;
+      tempEl.innerText = summary.avg_temp + " °C";
+      moistureEl.innerText = summary.avg_moisture + " %";
+      humidityEl.innerText = summary.avg_humidity + " %";
     }
-});
+  }, 3000);
+};
 
-// ----------------- FUNCTIONS -----------------
-function updateDashboard(data) {
-    phEl.innerText = data.avg_ph;
-    tempEl.innerText = data.avg_temp + " °C";
-    moistureEl.innerText = data.avg_moisture + " %";
-    humidityEl.innerText = data.avg_humidity + " %";
-    riskEl.innerText = data.risk_score;
-}
+document.getElementById("computeRisk").onclick = () => {
+  const crop = document.getElementById("crop").value;
+  const irrigation = document.getElementById("irrigation").value;
+  const fertilizer = document.getElementById("fertilizer").value;
 
-function resetChart() {
-    labels.length = 0;
-    moistureData.length = 0;
-    soilChart.update();
-}
+  // Update dashboard display (NEW)
+  cropDisplay.innerText = crop;
+  irrigationDisplay.innerText = irrigation;
+  fertilizerDisplay.innerText = fertilizer;
 
-// ----------------- START TEST -----------------
-startBtn.addEventListener("click", async () => {
-    if (isRecording) return;
+  // Risk calculation (same as before)
+  const cropRisk = { Rice:10, Wheat:15, Maize:20, Cotton:30, Vegetables:25 };
+  const irrigationRisk = {
+    "Daily":5,
+    "Alternate Days":10,
+    "Weekly":20,
+    "Irregular":30
+  };
+  const fertilizerRisk = {
+    "Weekly":5,
+    "Monthly":10,
+    "Rare":20,
+    "None":30
+  };
 
-    isRecording = true;
-    startBtn.disabled = true;
+  const practiceRisk =
+    cropRisk[crop] +
+    irrigationRisk[irrigation] +
+    fertilizerRisk[fertilizer];
 
-    // Reset UI
-    modal.classList.remove("hidden");
-    modalText.innerText = "Recording 0 / 10";
-    progressBar.style.width = "0%";
-    resetChart();
+  const finalRisk = Math.round(
+    0.6 * window.soilConditionRisk +
+    0.4 * practiceRisk
+  );
 
-    await fetch("/start-test", { method: "POST" });
+  riskEl.innerText = finalRisk;
 
-    intervalId = setInterval(async () => {
-        // Fetch progress
-        const summary = await fetch("/summary").then(res => res.json());
-        const count = summary.count || 0;
-
-        progressBar.style.width = (count / 10) * 100 + "%";
-        modalText.innerText = `Recording ${count} / 10`;
-
-        // Fetch latest live reading
-        const latest = await fetch("/latest").then(res => res.json());
-        if (latest.soil_moisture !== undefined) {
-            labels.push(`R${labels.length + 1}`);
-            moistureData.push(latest.soil_moisture);
-            soilChart.update();
-        }
-
-        // Finish test
-        if (count === 10) {
-            clearInterval(intervalId);
-            isRecording = false;
-
-            updateDashboard(summary);
-
-            setTimeout(() => {
-                modal.classList.add("hidden");
-                startBtn.disabled = false;
-            }, 600);
-        }
-    }, 3000);
-});
+  farmerModal.classList.add("hidden");
+};

@@ -1,5 +1,6 @@
 import os
 import statistics
+import logging
 from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from google import genai
@@ -10,10 +11,12 @@ from google import genai
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    raise RuntimeError("GEMINI_API_KEY not found in .env")
+client = None
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+if GEMINI_API_KEY:
+    client = genai.Client(api_key=GEMINI_API_KEY)
+else:
+    logging.warning("GEMINI_API_KEY not set — AI features will be disabled")
 
 # -------------------------------------------------
 # FLASK APP
@@ -234,6 +237,9 @@ Rules:
 - Avoid long paragraphs
 """
 
+    if not client:
+        return jsonify({"recommendation": "AI service not configured. Set GEMINI_API_KEY."})
+
     try:
         response = client.models.generate_content(
             model="gemini-3-flash-preview",
@@ -267,6 +273,9 @@ def translate_text():
         return jsonify({"error": "Missing text or language"}), 400
 
     prompt = f"Translate the following agricultural text into {language}. Only return the translated text.\n\nText:\n{text}"
+
+    if not client:
+        return jsonify({"error": "AI service not configured"}), 503
 
     try:
         response = client.models.generate_content(

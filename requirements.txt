@@ -3,4 +3,4 @@ python-dotenv==1.0.1
 requests==2.31.0
 google-generativeai
 google-genai
-
+gunicorn==21.2.0

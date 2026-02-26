@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SoilSense Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+    <h2>🌱 SoilSense</h2>
+    <button id="startBtn" class="primary-btn">Start Test</button>
+</header>
+
+<main class="dashboard">
+
+    <!-- Graph Card -->
+    <div class="card chart-card">
+        <h4>Live Soil Moisture Trend</h4>
+        <canvas id="soilChart"></canvas>
+    </div>
+
+    <div class="card risk">
+        <h4>Soil Health Risk</h4>
+        <span id="riskScore">--</span>
+    </div>
+
+    <div class="card">
+        <h4>Avg Soil pH</h4>
+        <span id="ph">--</span>
+    </div>
+
+    <div class="card">
+        <h4>Avg Soil Temp (°C)</h4>
+        <span id="temp">--</span>
+    </div>
+
+    <div class="card">
+        <h4>Avg Soil Moisture (%)</h4>
+        <span id="moisture">--</span>
+    </div>
+
+    <div class="card">
+        <h4>Avg Env Humidity (%)</h4>
+        <span id="humidity">--</span>
+    </div>
+
+</main>
+
+<!-- Modal -->
+<div id="modal" class="modal hidden">
+    <div class="modal-box">
+        <h3>Running Soil Test</h3>
+        <p id="modalText">Recording 0 / 10</p>
+        <div class="progress">
+            <div id="progressBar"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<div class="bento large">
+  <h4>Soil Health Risk</h4>
+  <span id="riskScore">--</span>
+</div>
+
+<div class="bento"><h4>Avg Soil pH</h4><span id="ph">--</span></div>
+<div class="bento"><h4>Soil Temp (°C)</h4><span id="temp">--</span></div>
+<div class="bento"><h4>Soil Moisture (%)</h4><span id="moisture">--</span></div>
+<div class="bento"><h4>Env Humidity (%)</h4><span id="humidity">--</span></div>
+
+<div class="bento"><h4>Crop</h4><span id="cropDisplay">--</span></div>
+<div class="bento"><h4>Irrigation</h4><span id="irrigationDisplay">--</span></div>
+<div class="bento"><h4>Fertilizer</h4><span id="fertilizerDisplay">--</span></div>
+
+<div class="bento center">
+  <button id="startBtn">Start New Test</button>
+</div>
+
+<div class="bento large">
+  <h4>AI Soil Health Recommendations</h4>
+  <div id="aiAdvice" class="ai-text">
+    Run a test to receive recommendations.
+  </div>
+</div>
+
+<!-- AI Recommendation Modal -->
+<div id="aiModal" class="modal hidden">
+  <div class="modal-box large">
+    <h3>AI Soil Health Recommendations</h3>
+    <div id="aiModalContent" class="ai-modal-text"></div>
+  </div>
+</div>

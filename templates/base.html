@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>SoilSense</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  {% include "components/header.html" %}
+
+  <main class="dashboard">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "components/sensor_modal.html" %}
+  {% include "components/farmer_modal.html" %}
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

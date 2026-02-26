@@ -163,3 +163,37 @@ button {
   font-size: 14px;
   color: #4e6f55;
 }
+
+/* AI Preview */
+.ai-preview {
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-line;
+  color: #2f4f2f;
+}
+
+.link-btn {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #4caf50;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* AI Modal */
+.ai-modal-text {
+  max-height: 60vh;
+  overflow-y: auto;
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-box.large {
+    width: 90%;
+    max-height: 80vh;
+  }
+}

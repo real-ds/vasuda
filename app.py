@@ -30,6 +30,113 @@ readings = []
 def index():
     return render_template("index.html")
 
+@app.route("/homepage")
+def homepage():
+    return render_template("homepage.html")
+
+# -------------------------------------------------
+# BLOG PAGES
+# -------------------------------------------------
+@app.route("/blog/soil-degradation")
+def blog_soil_degradation():
+    return render_template("blog.html",
+        title="Soil Degradation Prevention",
+        badge="Soil Science",
+        hero_image="/static/images/blog_soil_degradation.png",
+        content="""
+        <p><strong>Soil degradation is one of the most pressing environmental challenges of our time, affecting over 33% of the world's agricultural land.</strong> Without proactive monitoring, fertile topsoil erodes at alarming rates — up to 100 times faster than it can naturally regenerate. This silent crisis threatens food security for billions and accelerates climate change by releasing stored carbon into the atmosphere.</p>
+
+        <figure class="blog-image">
+            <img src="/static/images/soil_degradation.png" alt="Soil degradation comparison showing cracked, dry earth versus healthy soil">
+            <figcaption>Degraded soil (left) vs. healthy, nutrient-rich soil (right) — the difference proactive monitoring makes</figcaption>
+        </figure>
+
+        <p>VasuDA tackles this by combining <strong>real-time sensor data with predictive AI models</strong> that identify early warning signs of degradation — nutrient depletion, pH imbalance, moisture loss, and organic matter decline. Instead of reacting after the damage is done, farmers receive actionable alerts weeks or even months in advance, enabling them to intervene with targeted remediation strategies like cover cropping, composting, or adjusted tillage practices.</p>
+
+        <div class="takeaway-box">
+            <h3>Key Takeaway</h3>
+            <p>Prevention is 10x more cost-effective than remediation. By catching degradation early through continuous monitoring, VasuDA helps farmers save both their soil and their investment — preserving land productivity for future generations.</p>
+        </div>
+
+        <p>The technology behind VasuDA's degradation prevention draws on <strong>behavioral analytics</strong> — understanding how farming patterns, weather cycles, and soil biology interact over time. This holistic approach means recommendations aren't generic; they're tailored to each field's unique history and conditions, making regenerative agriculture practical and accessible for every farmer.</p>
+        """
+    )
+
+@app.route("/blog/water-management")
+def blog_water_management():
+    return render_template("blog.html",
+        title="Water Management Optimization",
+        badge="Resource Conservation",
+        hero_image="/static/images/blog_water_management.png",
+        content="""
+        <p><strong>Agriculture accounts for 70% of global freshwater withdrawal, yet nearly 60% of irrigation water is wasted through inefficient practices.</strong> As droughts become more frequent and water tables decline, optimizing irrigation isn't just environmentally responsible — it's essential for farm survival. Smart water management can reduce water usage by up to 40% while actually improving crop health.</p>
+
+        <figure class="blog-image">
+            <img src="/static/images/blog_water_management.png" alt="Smart irrigation system with soil moisture sensors">
+            <figcaption>Intelligent irrigation adapts in real-time based on soil moisture data from embedded sensors</figcaption>
+        </figure>
+
+        <p>VasuDA's moisture monitoring goes beyond simple readings. Our system tracks <strong>soil moisture patterns across multiple depth layers</strong>, correlating them with weather forecasts, crop growth stages, and evapotranspiration rates. The result is precision irrigation scheduling that delivers exactly the right amount of water, exactly when and where it's needed — eliminating both overwatering and drought stress.</p>
+
+        <div class="takeaway-box">
+            <h3>Key Takeaway</h3>
+            <p>Overwatering doesn't just waste water — it leaches nutrients, promotes fungal diseases, and compacts soil. VasuDA's intelligent moisture tracking helps farmers find the sweet spot, conserving water while building healthier, more resilient soil structure.</p>
+        </div>
+
+        <p>The economic impact is significant: farmers using data-driven irrigation typically see <strong>25–35% reduction in water costs</strong> alongside measurable improvements in crop quality. By analyzing historical moisture data alongside yield outcomes, VasuDA continuously refines its recommendations, learning what works best for each specific soil type and crop combination on your farm.</p>
+        """
+    )
+
+@app.route("/blog/crop-yield")
+def blog_crop_yield():
+    return render_template("blog.html",
+        title="Crop Yield Enhancement",
+        badge="Productivity",
+        hero_image="/static/images/blog_crop_yield.png",
+        content="""
+        <p><strong>Healthy soil is the foundation of productive farming — research shows that improving soil organic matter by just 1% can increase crop yields by 10–15%.</strong> Yet most farmers lack the tools to understand what's happening beneath the surface. Without real-time soil data, decisions about planting, fertilizing, and harvesting are based on guesswork rather than science, leaving significant productivity gains on the table.</p>
+
+        <figure class="blog-image">
+            <img src="/static/images/blog_crop_yield.png" alt="Data-driven crop yield optimization with soil analytics">
+            <figcaption>Real-time soil insights enable farmers to make data-driven decisions that directly boost yields</figcaption>
+        </figure>
+
+        <p>VasuDA transforms soil data into <strong>actionable farming intelligence</strong>. By continuously monitoring pH, temperature, moisture, and nutrient levels, our AI engine identifies the specific conditions that maximize yield for your crop type. Whether it's adjusting fertilizer application timing, optimizing planting density, or selecting the best crop variety for your soil profile — every recommendation is backed by real data from your own fields.</p>
+
+        <div class="takeaway-box">
+            <h3>Key Takeaway</h3>
+            <p>The difference between average and exceptional yields often comes down to timing and precision. VasuDA provides both — real-time monitoring catches issues early, while AI-driven insights ensure every farming decision is optimized for maximum productivity.</p>
+        </div>
+
+        <p>Farmers using VasuDA's insights have reported <strong>measurable improvements in both yield quantity and quality</strong>. By understanding the relationship between soil health and crop performance at a granular level, they can invest resources where they'll have the greatest impact — turning soil management from a cost center into a strategic advantage that compounds year over year.</p>
+        """
+    )
+
+@app.route("/blog/sustainable-practices")
+def blog_sustainable_practices():
+    return render_template("blog.html",
+        title="Sustainable Farming Practices",
+        badge="Regenerative Agriculture",
+        hero_image="/static/images/blog_sustainable.png",
+        content="""
+        <p><strong>Regenerative agriculture isn't just a trend — it's a necessity.</strong> Conventional farming practices have degraded one-third of the world's arable land over the past 40 years. The shift to sustainable, regenerative methods is critical, but many farmers hesitate because they lack confidence in new approaches. Without data to guide the transition, the perceived risk of changing established practices feels too high.</p>
+
+        <figure class="blog-image">
+            <img src="/static/images/blog_sustainable.png" alt="Sustainable farming cycle showing crop rotation and soil regeneration">
+            <figcaption>The regenerative farming cycle: healthier soil leads to better yields, which enables more sustainable practices</figcaption>
+        </figure>
+
+        <p>VasuDA removes the guesswork from sustainable farming by providing <strong>evidence-based guidance for every step of the transition</strong>. Our platform monitors how regenerative practices — cover cropping, reduced tillage, composting, crop rotation — are actually improving your soil health in real time. Seeing measurable progress builds confidence and helps farmers stay committed to practices that may take 2–3 seasons to show full results.</p>
+
+        <div class="takeaway-box">
+            <h3>Key Takeaway</h3>
+            <p>Sustainability and profitability aren't opposites — they're partners. Data shows regenerative farms achieve comparable or better yields within 3–5 years while dramatically reducing input costs. VasuDA makes this transition measurable, manageable, and motivating.</p>
+        </div>
+
+        <p>Beyond individual farm benefits, VasuDA helps quantify your contribution to <strong>global sustainability goals</strong> — tracking carbon sequestration, water conservation, and biodiversity improvements. This data isn't just meaningful for the environment; it's increasingly valued by consumers, certifiers, and supply chain partners who prioritize sustainably produced food.</p>
+        """
+    )
+
 
 @app.route("/start-test", methods=["POST"])
 def start_test():

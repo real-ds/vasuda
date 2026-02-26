@@ -1,33 +1,43 @@
-<div class="bento large">
+<!-- Row 1: Risk (wide) + pH + Temp -->
+<div class="bento col-span-2 row-span-2 risk-card">
     <h2>Soil Health Risk</h2>
-    <span id="riskScore">--</span>
+    <span id="riskScore" style="font-size: 4.5rem; line-height: 1;">--</span>
+    <p class="risk-label">out of 100</p>
 </div>
 
 <div class="bento">
-    <h4>Avg Soil pH</h4><span id="ph">--</span>
-</div>
-<div class="bento">
-    <h4>Soil Temp (°C)</h4><span id="temp">--</span>
-</div>
-<div class="bento">
-    <h4>Soil Moisture (%)</h4><span id="moisture">--</span>
-</div>
-<div class="bento">
-    <h4>Env Humidity (%)</h4><span id="humidity">--</span>
+    <h2>Avg Soil pH</h2><span id="ph">--</span>
 </div>
 
 <div class="bento">
-    <h4>Crop</h4><span id="cropDisplay">--</span>
-</div>
-<div class="bento">
-    <h4>Irrigation</h4><span id="irrigationDisplay">--</span>
-</div>
-<div class="bento">
-    <h4>Fertilizer</h4><span id="fertilizerDisplay">--</span>
+    <h2>Soil Temp (°C)</h2><span id="temp">--</span>
 </div>
 
-<div class="bento large" style="display: flex; flex-direction: column;">
-    <h4>AI Soil Health Recommendations</h4>
+<!-- Row 2: Moisture + Humidity (fill beside Risk) -->
+<div class="bento">
+    <h2>Soil Moisture (%)</h2><span id="moisture">--</span>
+</div>
+
+<div class="bento">
+    <h2>Env Humidity (%)</h2><span id="humidity">--</span>
+</div>
+
+<!-- Row 3: Farmer Inputs row -->
+<div class="bento">
+    <h2>Crop</h2><span id="cropDisplay">--</span>
+</div>
+
+<div class="bento">
+    <h2>Irrigation</h2><span id="irrigationDisplay">--</span>
+</div>
+
+<div class="bento">
+    <h2>Fertilizer</h2><span id="fertilizerDisplay">--</span>
+</div>
+
+<!-- Row 4: AI Recommendations (full width) -->
+<div class="bento col-span-full ai-card" style="display: flex; flex-direction: column;">
+    <h2>AI Soil Health Recommendations</h2>
     <div id="aiAdvice" class="ai-text">
         Run a test to receive recommendations.
     </div>
@@ -48,7 +58,7 @@
                     <option value="Tamil">Tamil</option>
                     <option value="Kannada">Kannada</option>
                 </select>
-                <button id="translateBtn" style="padding: 8px 14px; font-size: 13px;">Translate</button>
+                <button id="translateBtn" style="padding: 8px 14px; font-size: 13px;">🌐Translate</button>
             </div>
         </div>
         <div id="aiModalContent" class="ai-modal-text" style="flex: 1;"></div>

@@ -146,6 +146,31 @@ Rules:
         return jsonify({
             "recommendation": "AI could not generate recommendations at this time."
         })
+
+# -------------------------------------------------
+# TRANSLATION ROUTE
+# -------------------------------------------------
+@app.route("/translate", methods=["POST"])
+def translate_text():
+    data = request.json
+    text = data.get("text")
+    language = data.get("language")
+
+    if not text or not language:
+        return jsonify({"error": "Missing text or language"}), 400
+
+    prompt = f"Translate the following agricultural text into {language}. Only return the translated text.\n\nText:\n{text}"
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-3-flash-preview",
+            contents=prompt
+        )
+        translated = response.candidates[0].content.parts[0].text.strip()
+        return jsonify({"translated": translated})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # -------------------------------------------------
 # RUN
 # -------------------------------------------------

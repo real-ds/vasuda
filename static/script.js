@@ -18,7 +18,57 @@ document.addEventListener("DOMContentLoaded", () => {
   const humidityEl = document.getElementById("humidity");
   const riskEl = document.getElementById("riskScore");
   const aiAdviceEl = document.getElementById("aiAdvice");
+  const readMoreBtn = document.getElementById("readMoreBtn");
+  const aiModal = document.getElementById("aiModal");
+  const aiModalContent = document.getElementById("aiModalContent");
 
+  // ---------- AI MODAL LOGIC ----------
+  readMoreBtn.onclick = () => {
+    aiModal.classList.remove("hidden");
+  };
+
+  // Close AI modal when clicking outside
+  aiModal.onclick = (e) => {
+    if (e.target === aiModal) {
+      aiModal.classList.add("hidden");
+    }
+  };
+
+  const langSelect = document.getElementById("langSelect");
+  const translateBtn = document.getElementById("translateBtn");
+  let currentRecommendation = "";
+
+  translateBtn.onclick = async () => {
+    if (!currentRecommendation) return;
+    const targetLang = langSelect.value;
+    
+    translateBtn.innerText = "Translating...";
+    translateBtn.disabled = true;
+
+    try {
+      const response = await fetch("/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: currentRecommendation,
+          language: targetLang
+        })
+      });
+      const data = await response.json();
+      
+      if (data.translated) {
+        aiModalContent.innerHTML = marked.parse(data.translated);
+      } else {
+        alert("Translation failed.");
+      }
+    } catch (e) {
+      console.error("Translate Error:", e);
+      alert("Error translating content.");
+    } finally {
+      translateBtn.innerText = "Translate";
+      translateBtn.disabled = false;
+    }
+  };
   
   // ---------- START TEST ----------
   startBtn.onclick = async () => {
@@ -105,8 +155,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
       console.log("AI RESPONSE:", data);
 
-      aiAdviceEl.innerText =
-        data.recommendation || "⚠️ No AI recommendation generated.";
+      if (data.recommendation) {
+        currentRecommendation = data.recommendation;
+        // Parse markdown text using marked library added to base.html
+        const formattedText = marked.parse(currentRecommendation);
+        aiAdviceEl.innerHTML = formattedText;
+        aiModalContent.innerHTML = formattedText;
+        readMoreBtn.classList.remove("hidden");
+        if(langSelect) langSelect.value = "Hindi"; // reset select
+        if(translateBtn) {
+            translateBtn.innerText = "Translate";
+            translateBtn.disabled = false;
+        }
+      } else {
+        aiAdviceEl.innerText = "⚠️ No AI recommendation generated.";
+      }
 
     } catch (err) {
       console.error("AI ERROR:", err);

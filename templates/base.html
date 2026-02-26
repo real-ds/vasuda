@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>SoilSense</title>
-  <link rel="stylesheet" href="/static/style.css">
+    <title>SoilSense</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
 
-  {% include "components/header.html" %}
+    {% include "components/header.html" %}
 
-  <main class="dashboard">
-    {% block content %}{% endblock %}
-  </main>
+    <main class="dashboard">
+        {% block content %}{% endblock %}
+    </main>
 
-  {% include "components/sensor_modal.html" %}
-  {% include "components/farmer_modal.html" %}
+    {% include "components/sensor_modal.html" %}
+    {% include "components/farmer_modal.html" %}
 
-  <script src="/static/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/static/script.js"></script>
 </body>
+
 </html>

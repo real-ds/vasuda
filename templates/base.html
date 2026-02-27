@@ -17,9 +17,27 @@
 
     {% include "components/header.html" %}
 
-    <main class="dashboard">
-        {% block content %}{% endblock %}
-    </main>
+    <div class="app-layout">
+        <!-- History Sidebar -->
+        <aside class="history-sidebar" id="historySidebar">
+            <div class="sidebar-header">
+                <h3>📋 Test History</h3>
+                <button class="sidebar-clear-btn" id="clearHistoryBtn" title="Clear all">🗑️</button>
+            </div>
+            <div class="sidebar-list" id="historyList">
+                <div class="sidebar-empty">No tests recorded yet.<br>Run a test to see records here.</div>
+            </div>
+        </aside>
+
+        <!-- Toggle button -->
+        <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Test History">
+            <span class="toggle-icon">📋</span>
+        </button>
+
+        <main class="dashboard">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
 
     {% include "components/sensor_modal.html" %}
     {% include "components/farmer_modal.html" %}

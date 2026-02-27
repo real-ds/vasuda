@@ -45,12 +45,22 @@ document.addEventListener("DOMContentLoaded", () => {
     translateBtn.innerText = "Translating...";
     translateBtn.disabled = true;
 
+    // Strip markdown to plain text for cleaner translation
+    const plainText = currentRecommendation
+      .replace(/#{1,6}\s*/g, '')          // headers
+      .replace(/\*\*(.+?)\*\*/g, '$1')    // bold
+      .replace(/\*(.+?)\*/g, '$1')        // italic
+      .replace(/`(.+?)`/g, '$1')          // inline code
+      .replace(/- /g, '• ')              // bullet points
+      .replace(/\n{3,}/g, '\n\n')        // excess newlines
+      .trim();
+
     try {
       const response = await fetch("/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          text: currentRecommendation,
+          text: plainText,
           language: targetLang
         })
       });
@@ -58,14 +68,16 @@ document.addEventListener("DOMContentLoaded", () => {
       
       if (data.translated) {
         aiModalContent.innerHTML = marked.parse(data.translated);
+      } else if (data.error) {
+        aiModalContent.innerHTML = `<p style="color:#c62828;">⚠️ Translation failed: ${data.error}</p>`;
       } else {
-        alert("Translation failed.");
+        aiModalContent.innerHTML = `<p style="color:#c62828;">⚠️ Translation returned empty. Try again.</p>`;
       }
     } catch (e) {
       console.error("Translate Error:", e);
-      alert("Error translating content.");
+      aiModalContent.innerHTML = `<p style="color:#c62828;">❌ Network error. Check your connection and try again.</p>`;
     } finally {
-      translateBtn.innerText = "Translate";
+      translateBtn.innerText = "🌐 Translate";
       translateBtn.disabled = false;
     }
   };
@@ -129,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
       0.4 * practiceRisk
     );
 
-    riskEl.innerText = finalRisk;
+    riskEl.innerText = 100 - finalRisk;
     farmerModal.classList.add("hidden");
 
     // ---------- FORCE AI ----------
@@ -167,6 +179,41 @@ document.addEventListener("DOMContentLoaded", () => {
             translateBtn.innerText = "Translate";
             translateBtn.disabled = false;
         }
+
+        // Update Sustainable Index (100 - SHRS)
+        if (data.shrs !== undefined) {
+          riskEl.innerText = 100 - data.shrs;
+        }
+
+        // Trend display
+        const trendDisplay = document.getElementById("trendDisplay");
+        const trendIcon = document.getElementById("trendIcon");
+        const trendValue = document.getElementById("trendValue");
+        if (data.trend && trendDisplay) {
+          const trendMap = {
+            "Increasing Risk": { icon: "📈", color: "#c62828" },
+            "Decreasing Risk": { icon: "📉", color: "#2e7d32" },
+            "Stable": { icon: "➡️", color: "var(--text-light)" },
+            "Insufficient Data": { icon: "❓", color: "var(--text-light)" }
+          };
+          const t = trendMap[data.trend] || trendMap["Insufficient Data"];
+          trendIcon.textContent = t.icon;
+          trendValue.textContent = data.trend;
+          trendValue.style.color = t.color;
+          trendDisplay.style.opacity = "1";
+        }
+
+        // Practice escalation warnings
+        const warningEl = document.getElementById("practiceWarning");
+        if (data.practice_warning && data.practice_warning.length > 0 && warningEl) {
+          warningEl.innerHTML = data.practice_warning
+            .map(w => `🚨 ${w}`)
+            .join("<br>");
+          warningEl.style.display = "block";
+        } else if (warningEl) {
+          warningEl.style.display = "none";
+        }
+
       } else {
         aiAdviceEl.innerText = "⚠️ No AI recommendation generated.";
       }
@@ -176,5 +223,131 @@ document.addEventListener("DOMContentLoaded", () => {
       aiAdviceEl.innerText =
         "❌ AI service unavailable. Please try again.";
     }
+
+    // Refresh history sidebar after test
+    loadHistory();
   };
+
+  // ========== SIDEBAR LOGIC ==========
+  const sidebar = document.getElementById("historySidebar");
+  const sidebarToggle = document.getElementById("sidebarToggle");
+  const historyList = document.getElementById("historyList");
+  const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+  const dashboardEl = document.querySelector(".dashboard");
+
+  let sidebarOpen = false;
+
+  if (sidebarToggle) {
+    sidebarToggle.onclick = () => {
+      sidebarOpen = !sidebarOpen;
+      sidebar.classList.toggle("open", sidebarOpen);
+      sidebarToggle.classList.toggle("shifted", sidebarOpen);
+      if (dashboardEl) dashboardEl.classList.toggle("shifted", sidebarOpen);
+      sidebarToggle.querySelector(".toggle-icon").textContent = sidebarOpen ? "✕" : "📋";
+    };
+  }
+
+  if (clearHistoryBtn) {
+    clearHistoryBtn.onclick = async () => {
+      await fetch("/history/clear", { method: "POST" });
+      loadHistory();
+    };
+  }
+
+  async function loadHistory() {
+    try {
+      const res = await fetch("/history");
+      const records = await res.json();
+
+      if (!records.length) {
+        historyList.innerHTML = `<div class="sidebar-empty">No tests recorded yet.<br>Run a test to see records here.</div>`;
+        return;
+      }
+
+      historyList.innerHTML = records.map(r => {
+        const shrsClass = r.shrs <= 30 ? "shrs-low" : r.shrs <= 60 ? "shrs-mid" : "shrs-high";
+        const trendIcons = {
+          "Increasing Risk": "📈",
+          "Decreasing Risk": "📉",
+          "Stable": "➡️",
+          "Insufficient Data": "❓"
+        };
+        const trendIcon = trendIcons[r.trend] || "❓";
+
+        return `
+          <div class="history-item" data-id="${r.id}" onclick="loadRecord(${r.id})">
+            <div class="history-item-top">
+              <span class="history-id">Test #${r.id}</span>
+              <span class="history-shrs ${shrsClass}">SHRS ${r.shrs}</span>
+            </div>
+            <div class="history-details">
+              <span class="history-tag">pH ${r.sensor.ph}</span>
+              <span class="history-tag">${r.sensor.temp}°C</span>
+              <span class="history-tag">💧 ${r.sensor.moisture}%</span>
+              <span class="history-tag">🌿 ${r.practices.crop || "—"}</span>
+            </div>
+            <div class="history-trend">${trendIcon} ${r.trend}</div>
+            <div class="history-time">${r.timestamp}</div>
+          </div>
+        `;
+      }).join("");
+    } catch (e) {
+      console.error("Failed to load history:", e);
+    }
+  }
+
+  // Make loadRecord globally accessible
+  window.loadRecord = function(id) {
+    fetch("/history")
+      .then(r => r.json())
+      .then(records => {
+        const record = records.find(r => r.id === id);
+        if (!record) return;
+
+        // Highlight active item
+        document.querySelectorAll(".history-item").forEach(el => el.classList.remove("active"));
+        const activeEl = document.querySelector(`[data-id="${id}"]`);
+        if (activeEl) activeEl.classList.add("active");
+
+        // Populate dashboard fields
+        phEl.innerText = record.sensor.ph;
+        tempEl.innerText = record.sensor.temp;
+        moistureEl.innerText = record.sensor.moisture;
+        humidityEl.innerText = record.sensor.humidity;
+        riskEl.innerText = 100 - record.shrs;
+        cropDisplay.innerText = record.practices.crop || "--";
+        irrigationDisplay.innerText = record.practices.irrigation || "--";
+        fertilizerDisplay.innerText = record.practices.fertilizer || "--";
+
+        // Populate AI advice
+        if (record.recommendation) {
+          currentRecommendation = record.recommendation;
+          const formattedText = marked.parse(currentRecommendation);
+          aiAdviceEl.innerHTML = formattedText;
+          aiModalContent.innerHTML = formattedText;
+          readMoreBtn.classList.remove("hidden");
+        }
+
+        // Populate trend
+        const trendDisplay = document.getElementById("trendDisplay");
+        const trendIcon = document.getElementById("trendIcon");
+        const trendValueEl = document.getElementById("trendValue");
+        if (trendDisplay && record.trend) {
+          const tMap = {
+            "Increasing Risk": { icon: "📈", color: "#c62828" },
+            "Decreasing Risk": { icon: "📉", color: "#2e7d32" },
+            "Stable": { icon: "➡️", color: "var(--text-light)" },
+            "Insufficient Data": { icon: "❓", color: "var(--text-light)" }
+          };
+          const t = tMap[record.trend] || tMap["Insufficient Data"];
+          trendIcon.textContent = t.icon;
+          trendValueEl.textContent = record.trend;
+          trendValueEl.style.color = t.color;
+          trendDisplay.style.opacity = "1";
+        }
+      });
+  };
+
+  // Load history on page load
+  loadHistory();
 });

@@ -1,9 +1,26 @@
-<!-- Row 1: Risk (wide) + pH + Temp -->
+<!-- Row 1: Sustainable Index (wide) + pH + Temp -->
 <div class="bento col-span-2 row-span-2 risk-card">
-    <h2>Soil Health Risk</h2>
+    <h2>Sustainable Index</h2>
     <span id="riskScore" style="font-size: 4.5rem; line-height: 1;">--</span>
     <p class="risk-label">out of 100</p>
+    <br>
+    
+    <div class="bento trend-card">
+    <h2>Trend Analysis</h2>
+    <div id="trendDisplay"
+        style="margin-top: 4px; font-family: 'Inter', sans-serif; transition: opacity 0.4s ease; opacity: 0;">
+        <span id="trendIcon" style="font-size: 1.6rem;"></span>
+        <span id="trendValue"
+            style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 800; display: block; margin-top: 4px;">--</span>
+    </div>
+    <div id="practiceWarning"
+        style="margin-top: 10px; padding: 10px 14px; background: rgba(198, 40, 40, 0.08); border-left: 3px solid #c62828; border-radius: 0 8px 8px 0; font-family: 'Inter', sans-serif; font-size: 0.78rem; color: #c62828; font-weight: 500; display: none;">
+    </div>
 </div>
+
+</div>
+
+
 
 <div class="bento">
     <h2>Avg Soil pH</h2><span id="ph">--</span>
@@ -13,7 +30,7 @@
     <h2>Soil Temp (°C)</h2><span id="temp">--</span>
 </div>
 
-<!-- Row 2: Moisture + Humidity (fill beside Risk) -->
+<!-- Row 2: Moisture + Humidity (fill beside Sustainable Index) -->
 <div class="bento">
     <h2>Soil Moisture (%)</h2><span id="moisture">--</span>
 </div>
@@ -22,7 +39,7 @@
     <h2>Env Humidity (%)</h2><span id="humidity">--</span>
 </div>
 
-<!-- Row 3: Farmer Inputs row -->
+<!-- Row 3: Farmer Inputs + Trend Analysis -->
 <div class="bento">
     <h2>Crop</h2><span id="cropDisplay">--</span>
 </div>
@@ -34,6 +51,7 @@
 <div class="bento">
     <h2>Fertilizer</h2><span id="fertilizerDisplay">--</span>
 </div>
+
 
 <!-- Row 4: AI Recommendations (full width) -->
 <div class="bento col-span-full ai-card" style="display: flex; flex-direction: column;">
